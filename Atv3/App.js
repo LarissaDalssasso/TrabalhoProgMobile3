@@ -7,16 +7,13 @@ import { useEffect } from "react";
 const PilhasTelas = createNativeStackNavigator()
 const URL_API = 'https://jsonplaceholder.typicode.com/posts'
 const URL_API2 = 'https://jsonplaceholder.typicode.com/posts/id/comments'
+
+
 function TelaInicial({ route, navigation }) {
     const [users, setUsers] = useState([])
 
     useEffect(() => {
         fetch(URL_API).then(resposta => resposta.json())
-            .then(json => { setUsers(json) })
-            .catch(() => { Alert.alert("Erro ao carregar usuários") })
-    })
-    useEffect(() => {
-        fetch(URL_API2).then(resposta => resposta.json())
             .then(json => { setUsers(json) })
             .catch(() => { Alert.alert("Erro ao carregar usuários") })
     })
@@ -63,6 +60,7 @@ function VisualizarUsuario({ route, navigation }) {
 export default function App() {
     return (
         <NavigationContainer>
+           
             <PilhasTelas.Navigator>
                 <PilhasTelas.Screen
                     name="TelaInicial"
