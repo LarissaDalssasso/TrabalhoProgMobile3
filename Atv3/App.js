@@ -2,6 +2,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, ScrollView, StyleSheet, Button, Alert } from "react-native";
 import { useState, useEffect } from "react";
+import AsyncStorage from '@react-native-async-storage/async-storage'; // Para salvar favoritos
+
 
 const PilhasTelas = createNativeStackNavigator();
 const URL_API = 'https://jsonplaceholder.typicode.com/posts';
@@ -33,6 +35,11 @@ function TelaInicial({ navigation }) {
                         />
                     </View>
                 ))}
+                   <Button
+                    title="Ver Favoritos"
+                    color="#436"
+                    onPress={() => navigation.navigate("Favoritos")}
+                />
             </View>
         </ScrollView>
     );
@@ -48,12 +55,77 @@ function VisualizarUsuario({ route }) {
             .catch(() => Alert.alert("Erro", "Não foi possível carregar os comentários"));
     }, [route.params.id]);
 
+
+    const favoritar = async () => {
+        try {
+            const favoritos = JSON.parse(await AsyncStorage.getItem('favoritos')) || [];
+            if (!favoritos.includes(route.params.id)) {
+                favoritos.push(route.params.id);
+                await AsyncStorage.setItem('favoritos', JSON.stringify(favoritos));
+                Alert.alert("Post favoritado", "Este post foi adicionado aos favoritos!");
+            } else {
+                Alert.alert("Aviso", "Este post já está nos favoritos.");
+            }
+        } catch (error) {
+            Alert.alert("Erro", "Não foi possível favoritar o post.");
+        }
+    };
+
+
+    return (
+        <ScrollView>
+            <View>
+                <View style={styles.container}>
+                    <Text>Nome: {user?.name}</Text>
+                    <Text>Email: {user?.email}</Text>
+                    <Text>Comentário: {user?.body}</Text>
+                </View>
+
+                <Button
+                    title="Favoritar"
+                    color="#436"
+                    onPress={favoritar}
+                /></View>
+        </ScrollView>
+    );
+}
+
+function Favoritos({ navigation }) {
+    const [favoritos, setFavoritos] = useState([]);
+    const [postsFavoritos, setPostsFavoritos] = useState([]);
+
+    useEffect(() => {
+        const carregarFavoritos = async () => {
+            try {
+                const favs = JSON.parse(await AsyncStorage.getItem('favoritos')) || [];
+                setFavoritos(favs);
+
+                // Buscar os detalhes dos posts favoritados
+                const promises = favs.map(id => fetch(`${URL_API}/${id}`).then(res => res.json()));
+                const resultados = await Promise.all(promises);
+                setPostsFavoritos(resultados);
+            } catch (error) {
+                Alert.alert("Erro", "Não foi possível carregar os posts favoritos.");
+            }
+        };
+
+        carregarFavoritos();
+    }, []);
+
     return (
         <ScrollView>
             <View style={styles.container}>
-                <Text>Nome: {user?.name}</Text>
-                <Text>Email: {user?.email}</Text>
-                <Text>Comentário: {user?.body}</Text>
+                <Text>Posts Favoritos</Text>
+                {postsFavoritos.map(post => (
+                    <View key={post.id} style={styles.cardContainer}>
+                        <Text>{post.title}</Text>
+                        <Button
+                            title="Ver Detalhes"
+                            color="#436"
+                            onPress={() => navigation.navigate("VisualizarUsuario", { id: post.id })}
+                        />
+                    </View>
+                ))}
             </View>
         </ScrollView>
     );
@@ -73,7 +145,13 @@ export default function App() {
                     component={VisualizarUsuario}
                     options={{ title: "Visualizar Usuário" }}
                 />
+                <PilhasTelas.Screen
+                    name="Favoritos"
+                    component={Favoritos}
+                    options={{ title: "Favoritos" }}
+                />
             </PilhasTelas.Navigator>
+            
         </NavigationContainer>
     );
 }
