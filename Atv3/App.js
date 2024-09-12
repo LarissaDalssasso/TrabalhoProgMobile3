@@ -2,7 +2,7 @@ import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text, ScrollView, StyleSheet, Button, Alert } from "react-native";
 import { useState, useEffect } from "react";
-import AsyncStorage from '@react-native-async-storage/async-storage'; // Para salvar favoritos
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const PilhasTelas = createNativeStackNavigator();
@@ -22,7 +22,12 @@ function TelaInicial({ navigation }) {
     return (
         <ScrollView>
             <View style={styles.container}>
-                <Text>Usuários</Text>
+                <Text>Usuários</Text> 
+                <Button
+                    title="Ver Favoritos"
+                    color="#436"
+                    onPress={() => navigation.navigate("Favoritos")}
+                />
                 {users.map(us => (
                     <View key={us.id} style={styles.cardContainer}>
                         <View>
@@ -35,11 +40,7 @@ function TelaInicial({ navigation }) {
                         />
                     </View>
                 ))}
-                   <Button
-                    title="Ver Favoritos"
-                    color="#436"
-                    onPress={() => navigation.navigate("Favoritos")}
-                />
+                  
             </View>
         </ScrollView>
     );
@@ -91,7 +92,7 @@ function VisualizarUsuario({ route }) {
 }
 
 function Favoritos({ navigation }) {
-    const [favoritos, setFavoritos] = useState([]);
+    const [Favoritos, setFavoritos] = useState([]);
     const [postsFavoritos, setPostsFavoritos] = useState([]);
 
     useEffect(() => {
@@ -99,8 +100,6 @@ function Favoritos({ navigation }) {
             try {
                 const favs = JSON.parse(await AsyncStorage.getItem('favoritos')) || [];
                 setFavoritos(favs);
-
-                // Buscar os detalhes dos posts favoritados
                 const promises = favs.map(id => fetch(`${URL_API}/${id}`).then(res => res.json()));
                 const resultados = await Promise.all(promises);
                 setPostsFavoritos(resultados);
