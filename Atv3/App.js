@@ -24,11 +24,11 @@ function TelaInicial({ navigation }) {
                 <View style={styles.container}>
                     <Text style={styles.texto2}>Usuários</Text>
                     <View style={styles.botao}>
-                    <Button
-                        title="Ver Favoritos"
-                        color="#436"
-                        onPress={() => navigation.navigate("Favoritos")}
-                    /></View>
+                        <Button
+                            title="Ver Favoritos"
+                            color="#436"
+                            onPress={() => navigation.navigate("Favoritos")}
+                        /></View>
                     {users.map(us => (
                         <View key={us.id} style={styles.cardContainer}>
                             <View style={styles.texto}>
@@ -73,7 +73,7 @@ function VisualizarUsuario({ route }) {
         <SafeAreaView style={styles.containerScroow}>
             <ScrollView style={styles.scrollView}>
                 <View style={styles.container}>
-                    <View>
+                    <View style={styles.textos}>
                         <Text>Nome: {user.name}</Text>
                         <Text>Email: {user.email}</Text>
                         <Text>Comentário: {user.body}</Text>
@@ -111,15 +111,18 @@ function Favoritos({ navigation }) {
         <SafeAreaView style={styles.containerScroow}>
             <ScrollView style={styles.scrollView}>
                 <View style={styles.container}>
-                    <Text>Posts Favoritos</Text>
+                    <Text style={styles.texto2}>Posts Favoritos</Text>
                     {postsFavoritos.map(post => (
                         <View key={post.id} style={styles.cardContainer}>
-                            <Text style={styles.textoDetalhe}>{post.title}</Text>
+                            <View style={styles.textoDetalhe}>
+                                <Text>{post.title}</Text>
+                            </View>
+                            <View style={styles.botao}>
                             <Button
                                 title="Ver Detalhes"
                                 color="#436"
                                 onPress={() => navigation.navigate("VisualizarUsuario", { id: post.id })}
-                            />
+                            /></View>
                         </View>
                     ))}
                 </View>
@@ -171,23 +174,26 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         marginBottom: 10,
         marginHorizontal: 7,
-        padding: 15,
+        padding: 7,
         flexDirection: "row",
         justifyContent: "space-between",
     },
     scrollView: {
         margin: 2,
     },
-    texto:{
+    texto: {
         width: '85%'
     },
-    botao:{
-        margin:10
+    botao: {
+        margin: 8
     },
-    texto2:{
-        fontSize:25,
+    texto2: {
+        fontSize: 20,
     },
-    // textoDetalhe:{
-    //     width: '70%'
-    // }
+    textoDetalhe: {
+        width: '65%'
+    },
+    textos:{
+        padding: 7
+    }
 });
