@@ -32,7 +32,7 @@ function TelaInicial({ navigation }) {
                     {posts.map(pt => (
                         <View key={pt.id} style={styles.cardContainer}>
                             <View style={styles.texto}>
-                                <Text>Título: {pt.title.replaceAll("\n"," ")}</Text>
+                                <Text>Título: {pt.title.replaceAll("\n", " ")}</Text>
                             </View>
                             <Button
                                 title="Ver"
@@ -52,27 +52,26 @@ function VisualizarPosts({ route }) {
     useEffect(() => {
         fetch(`${URL_API_COMMENTS}/${route.params.id}/comments`)
             .then(resposta => resposta.json())
-            .then(json => setComentarios(json)) // Obtendo o primeiro comentário da lista
+            .then(json => setComentarios(json))
             .catch((error) => {
                 Alert.alert("Erro", "Não foi possível carregar os comentários")
                 console.log(error.message);
-
             });
-    }, [route.params.id ]);
+    }, [route.params.id]);
+
     const favoritar = async () => {
         try {
             const favoritos = SyncStorage.get('favoritos') || [];
-
             const postFavorito = {
-                        id: route.params.id,
-                        title: route.params.title,
-                        body: route.params.body
-                    }
-            const postFinded = favoritos.find( p => p.id === postFavorito.id )
+                id: route.params.id,
+                title: route.params.title,
+                body: route.params.body
+            }
+            const postFinded = favoritos.find(p => p.id === postFavorito.id)
             if (!postFinded) {
-                
                 favoritos.push(postFavorito);
                 SyncStorage.set('favoritos', favoritos);
+                
                 Alert.alert("Post favoritado", "Este post foi adicionado aos favoritos!");
             } else {
                 Alert.alert("Aviso", "Este post já está nos favoritos.");
@@ -80,16 +79,16 @@ function VisualizarPosts({ route }) {
         } catch (error) {
             Alert.alert("Erro", "Não foi possível favoritar o post.");
             console.log(error.message);
-            
         }
     };
+
     return (
         <SafeAreaView style={styles.containerScroow}>
             <ScrollView style={styles.scrollView}>
                 <View style={styles.container}>
-                    <Text style={styles.texto2}>{route.params.title.replaceAll("\n"," ")}</Text>
+                    <Text style={styles.texto2}>{route.params.title.replaceAll("\n", " ")}</Text>
                     <View style={styles.textoComent}>
-                        <Text>{route.params.body.replaceAll("\n"," ")}</Text>
+                        <Text>{route.params.body.replaceAll("\n", " ")}</Text>
                     </View>
                     <Button
                         title="Favoritar"
@@ -102,11 +101,11 @@ function VisualizarPosts({ route }) {
                             <View style={styles.textoDetalhe2}>
                                 <Text>Nome: {pt.name}</Text>
                                 <Text>Email: {pt.email}</Text>
-                                <Text>Comentário: {pt.body.replaceAll("\n"," ")}</Text>
+                                <Text>Comentário: {pt.body.replaceAll("\n", " ")}</Text>
                             </View>
                         </View>
                     ))}
-                    </View>
+                </View>
             </ScrollView>
         </SafeAreaView>
     );
@@ -118,14 +117,10 @@ function Favoritos({ navigation }) {
         const carregarFavoritos = async () => {
             try {
                 const favs = SyncStorage.get('favoritos') || [];
-                console.log(favs);
-                // const promises = favs.map(id => fetch(`${URL_API}/${id}`).then(res => res.json()));
-                // const resultados = await Promise.all(promises);
                 setPostsFavoritos(favs);
             } catch (error) {
                 Alert.alert("Erro", "Não foi possível carregar os posts favoritos.");
                 console.log(error.message);
-                
             }
         };
         carregarFavoritos();
@@ -182,19 +177,17 @@ export default function App() {
 const styles = StyleSheet.create({
     containerScroow: {
         paddingTop: StatusBar.currentHeight,
-        backgroundColor: "#fff",
     },
     container: {
         flex: 1,
-        backgroundColor: "#fff",
         alignItems: "center",
         justifyContent: "center",
-
     },
     cardContainer: {
         width: "95%",
         borderWidth: 1,
         borderColor: "#d5d5d5",
+        backgroundColor:"#fff",
         borderRadius: 10,
         marginBottom: 10,
         marginHorizontal: 7,
@@ -212,8 +205,8 @@ const styles = StyleSheet.create({
         margin: 8
     },
     texto2: {
-        textAlign:'center',
-        margin:20,
+        textAlign: 'center',
+        margin: 20,
         fontSize: 20,
     },
     textoDetalhe: {
